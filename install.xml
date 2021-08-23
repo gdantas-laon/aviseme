@@ -10,7 +10,7 @@
             $data['column_left'] = $this->load->controller('common/column_left');
             ]]></search>
             <add position="replace"><![CDATA[
-            test123
+            test124
             ]]></add>
         </operation>
     </file>
