@@ -1,0 +1,61 @@
+<script src="https://use.fontawesome.com/bb2df91c5d.js"></script>
+
+<button id="buttonAviseme" type="button" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-aviseme"><i
+            class="fas fa-envelope"></i>{{ text_aviseme }} </button>
+<form class="hide" id="formAviseme" method="POST">
+    <div class="form-group">
+        <label for="nameAviseme">Seu Nome</label>
+        <input name="name" type="text"  class="form-control" id="nameAviseme">
+        <label for="emailAviseme">Seu E-mail</label>
+        <input name="email" type="email" class="form-control" id="emailAviseme" placeholder="exemplo@email.com">
+    </div>
+    <button id="submitAviseme" type="button" class="btn btn-primary">Enviar</button>
+</form>
+<div class="div-msg"><span id="span-msg"></span></div>
+
+<script type="text/javascript">
+
+    $('#buttonAviseme').click(function (){
+        $.ajax({
+            url:'index.php?route=extension/module/aviseme/getForm',
+            type: 'GET',
+            data: $('#product-id').serialize(),
+            success: function (response){
+                response = JSON.parse(response);
+                if( response.success === true){
+                    $('#formAviseme').removeClass('hide');
+                }else{
+                    $('#buttonAviseme').html(response.success);
+                }
+            },
+            error: function (jqxhr,textStatus,errorThrown){
+                console.log(jqxhr);
+                console.log(textStatus);
+                console.log(errorThrown);
+            }
+        });
+
+    })
+
+    $('#submitAviseme').click(function (){
+        $.ajax({
+            url:'index.php?route=extension/module/aviseme/validateForm',
+            type: 'POST',
+            data: $('#formAviseme, #product-id').serialize(),
+            success: function (response){
+                response = JSON.parse(response);
+                if (response.error) {
+                    $('.div-msg').children('#span-msg').html(response.error)
+                } else {
+                    $('.div-msg').children('#span-msg').html(response.success)
+                }
+            },
+            error: function (jqxhr,textStatus,errorThrown){
+                console.log(jqxhr);
+                console.log(textStatus);
+                console.log(errorThrown);
+            }
+        });
+
+    })
+</script>

@@ -53,6 +53,47 @@
             </add>
         </operation>
     </file>
+    <file path="catalog/language/pt-br/product/product.php">
+        <operation>
+            <search><![CDATA[
+			$_['text_instock']             = 'Em estoque';
+			]]></search>
+            <add position="after">
+                <![CDATA[
+                $_['text_aviseme']         = 'Avise-me quando chegar';
+                $_['text_loggedCustomer']   = 'Você será informado quando chegar';
+                $_['text_blank_email']         = 'O email não pode ficar em branco';
+    			$_['text_invalid_email']         = 'Email invalido';
+    			$_['text_success_email']         = 'Você será informado quando esse item entrar em estoque!';
+    			$_['text_undefined_error']       = 'Ops, houve um erro ao fazer sua requisição';
+    			]]>
+            </add>
+        </operation>
+        <operation>
+            <search><![CDATA[
+			$data['description'] = html_entity_decode($product_info['description'], ENT_QUOTES, 'UTF-8');
+			]]></search>
+            <add position="after">
+                <![CDATA[
+                 $data['quantity'] = $product_info['quantity'];
+    			]]>
+            </add>
+        </operation>
+    </file>
+    <file path="admin/language/pt-br/catalog/product.php">
+    <operation>
+        <search><![CDATA[
+		$_['text_keyword']           = 'Não utilize espaços, substitua os espaços por - (hífen), e certifique-se que a palavra é exclusiva em toda a loja.';
+			]]></search>
+        <add position="after">
+            <![CDATA[
+                $_['text_email_body']         = 'Lembramos de você: O produto que você queria voltou ao estoque -';
+                $_['text_subject']            = '- Chegou! - ';
+                $_['text_go_product']         = 'Mas corra antes que acabe novamente' ;
+                ]]>
+        </add>
+    </operation>
+    </file>
     <file path="catalog/view/theme/*/template/product/product.twig">
         <operation>
             <search><![CDATA[<a id="button-cart"]]></search>
@@ -70,5 +111,22 @@
                 ]]>
             </add>
         </operation>
+    </file>
+    <file path="admin/controller/catalog/product.php">
+    <operation error="skip" info="Adds a call to notify the customer if the item is available for purchase; upon the item being added back in stock.">
+        <search ><![CDATA[
+          $this->model_catalog_product->editProduct($this->request->get['product_id'], $this->request->post);
+          ]]></search>
+        <add position="after"><![CDATA[
+          $this->load->model('extension/module/aviseme');
+
+          if (isset($this->request->post['quantity']) && $this->request->post['quantity'] >0 ) {
+            $product_request = $this->model_extension_module_aviseme->getRequest($this->request->get['product_id']);
+              if ($product_request >0){
+                $this->model_extension_module_aviseme->sendNotifications($this->request->get['product_id']);
+              }
+          }
+        ]]></add>
+    </operation>
     </file>
 </modification>
